@@ -14,11 +14,16 @@ class RunMyApp extends StatefulWidget {
 class _RunMyAppState extends State<RunMyApp> {
   // Variable to manage the current theme mode
   ThemeMode _themeMode = ThemeMode.system;
+  
+  // Variable to control the container color for animation
+  Color _containerColor = Colors.grey;
 
   // Method to toggle the theme
   void changeTheme(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
+      // Update container color for animation
+      _containerColor = themeMode == ThemeMode.dark ? Colors.white : Colors.grey;
     });
   }
 
@@ -31,7 +36,7 @@ class _RunMyAppState extends State<RunMyApp> {
       // TODO: Customize these themes further if desired
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
-        scaffoldBackgroundColor: Colors.grey[200], // Light mode background
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255), // Light mode background
       ),
       darkTheme: ThemeData.dark(), // Dark mode configuration
       
@@ -46,44 +51,61 @@ class _RunMyAppState extends State<RunMyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // PART 1 TASK: Container and Text
-              Container(
+              AnimatedContainer(
                 width: 300,
                 height: 200,
                 margin: const EdgeInsets.all(20),
+                duration: const Duration(milliseconds: 500),
                 decoration: BoxDecoration(
-                  // Use a ternary operator to check theme brightness
-                  color: Theme.of(context).brightness == Brightness.dark 
-                      ? Colors.white 
-                      : Colors.grey,
+                  // Use state variable for smooth animation
+                  color: _containerColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 alignment: Alignment.center,
-                child: const Text(
+                child: Text(
                   'Mobile App Development Testing',
-                  style: TextStyle(fontSize: 18, color: Colors.black),
+                    style: TextStyle(fontSize: 18, color: Theme.of(context).textTheme.bodyLarge?.color),
                   textAlign: TextAlign.center,
                 ),
               ),
               
-              const SizedBox(height: 20),
-              
-              const Text('Choose the Theme:', style: TextStyle(fontSize: 16)),
-              
-              const SizedBox(height: 10),
-
-              // PART 1 TASK: Controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => changeTheme(ThemeMode.light),
-                    child: const Text('Light Theme'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => changeTheme(ThemeMode.dark),
-                    child: const Text('Dark Theme'),
-                  ),
-                ],
+              Card(
+                color: Theme.of(context).colorScheme.primary, // Use theme color with opacity
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                      'Choose Your Theme',
+                      textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                      Icon(
+                        Icons.wb_sunny,
+                        color: _themeMode != ThemeMode.dark ? Colors.yellow : Colors.grey,
+                      ),
+                      Switch(
+                        value: _themeMode == ThemeMode.dark, 
+                        onChanged: (bool value) {
+                        changeTheme(value ? ThemeMode.dark : ThemeMode.light);
+                        },
+                        ),
+                      Icon(
+                        Icons.nightlight_round,
+                        color: _themeMode == ThemeMode.dark ? Colors.yellow : Colors.grey,
+                      ),
+                      ],
+                    ),
+                    Text(
+                      _themeMode == ThemeMode.dark ? "Dark Mode" : "Light Mode",
+                      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                      )
+                  ],
+                ),
               ),
             ],
           ),
