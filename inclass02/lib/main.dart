@@ -18,6 +18,11 @@ class _RunMyAppState extends State<RunMyApp> {
   // Variable to control the container color for animation
   Color _containerColor = Colors.grey;
 
+  // Sizing constants used inside the theme toggle card
+  static const double _cardIconSize = 36.0;
+  static const double _cardTitleFontSize = 20.0;
+  static const double _cardStatusFontSize = 16.0;
+
   // Method to toggle the theme
   void changeTheme(ThemeMode themeMode) {
     setState(() {
@@ -79,13 +84,20 @@ class _RunMyAppState extends State<RunMyApp> {
                       child: Text(
                       'Choose Your Theme',
                       textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: _cardTitleFontSize,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                       ),
                     ),
+                    // Icons and switch laid out horizontally for the theme picker
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                       Icon(
                         Icons.wb_sunny,
+                        size: _cardIconSize,
                         color: _themeMode != ThemeMode.dark ? Colors.yellow : Colors.grey,
                       ),
                       Switch(
@@ -96,13 +108,19 @@ class _RunMyAppState extends State<RunMyApp> {
                         ),
                       Icon(
                         Icons.nightlight_round,
+                        size: _cardIconSize,
                         color: _themeMode == ThemeMode.dark ? Colors.yellow : Colors.grey,
                       ),
                       ],
                     ),
+                    // Status label reflects current theme with larger text
                     Text(
                       _themeMode == ThemeMode.dark ? "Dark Mode" : "Light Mode",
-                      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                      style: TextStyle(
+                        fontSize: _cardStatusFontSize,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                       )
                   ],
                 ),
