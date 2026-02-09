@@ -69,7 +69,11 @@ class _RunMyAppState extends State<RunMyApp> {
                 alignment: Alignment.center,
                 child: Text(
                   'Mobile App Development Testing',
-                    style: TextStyle(fontSize: 18, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -127,7 +131,7 @@ class _RunMyAppState extends State<RunMyApp> {
               ),
 
               SizedBox(height: 30), // Spacing between card and buttons
-              
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
