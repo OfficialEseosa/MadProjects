@@ -125,6 +125,22 @@ class _RunMyAppState extends State<RunMyApp> {
                   ],
                 ),
               ),
+
+              SizedBox(height: 30), // Spacing between card and buttons
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => changeTheme(ThemeMode.light),
+                    child: const Text('Light Theme'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => changeTheme(ThemeMode.dark),
+                    child: const Text('Dark Theme'),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
