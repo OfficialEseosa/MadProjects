@@ -10,12 +10,7 @@ class CounterImageToggleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CW1 Counter & Toggle',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      home: const HomePage(),
-    );
+    return const HomePage();
   }
 }
 
@@ -41,7 +36,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _controller = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
-    );
+    )..value = 1.0;
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
   }
 
@@ -82,13 +77,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     setState(() => _isDark = !_isDark);
   }
 
-  void _toggleImage() {
-    if (_isFirstImage) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
-    }
+  void _toggleImage() async {
+    await _controller.reverse();
     setState(() => _isFirstImage = !_isFirstImage);
+    await _controller.forward();  
   }
 
   @override
