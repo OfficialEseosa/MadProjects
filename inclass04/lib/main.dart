@@ -35,7 +35,7 @@ class _CounterWidgetState extends State<CounterWidget> {
   bool _maxCelebrated = false;
   TextEditingController _controller = TextEditingController();
 
-    void _checkGoal(BuildContext context) {
+  void _checkGoal(BuildContext context) {
     if (_counter >= _max && !_maxCelebrated) {
       _maxCelebrated = true;
       Future.microtask(() {
@@ -78,6 +78,9 @@ class _CounterWidgetState extends State<CounterWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final double progress = (_counter / _goal).clamp(0.0, 1.0);
+    final Color counterColor = Color.lerp(Colors.green, Colors.red, progress)!;
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Stateful Widget'),
@@ -87,11 +90,11 @@ class _CounterWidgetState extends State<CounterWidget> {
         children: [
           Center(
             child: Container(
-              color: Colors.blue,
+              color: counterColor,
               child: Text(
                 //displays the current number
                 '$_counter',
-                style: TextStyle(fontSize: 50.0),
+                style: TextStyle(fontSize: 50.0, color: Colors.white),
               ),
             ),
           ),
