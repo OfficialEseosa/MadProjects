@@ -100,10 +100,41 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void _resetCounter() {
-    _pushHistory();
-    setState(() => _counter = 0);
-    _celebrated = false;
+    setState(() {
+      _counter = 0;
+      _celebrated = false;
+      _history.clear();
+      _goal = 50;
+    });
     _saveCounter();
+  }
+
+  Future<void> _showResetDialog() async {
+    final ctx = _navKey.currentContext;
+    if (ctx == null) return;
+    return showDialog<void>(
+      context: ctx,
+      barrierDismissible: false,
+      builder: (BuildContext dialogCtx) {
+        return AlertDialog(
+          title: const Text('Confirm Reset'),
+          content: const Text('Are you sure you want to clear all data? This cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(dialogCtx).pop(),
+            ),
+            TextButton(
+              child: const Text('Reset'),
+              onPressed: () {
+                _resetCounter();
+                Navigator.of(dialogCtx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _undo() {
@@ -187,7 +218,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    final double progress = (_counter / _goal).clamp(0.0, 1.0);
+    final Color counterColor = Color.lerp(Colors.green, Colors.red, progress)!;
+
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: _navKey,
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData.light(),
@@ -253,7 +288,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
                   Text(
                     'Counter: $_counter',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: counterColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
 
@@ -285,7 +323,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         child: const Text('-1'),
                       ),
                       ElevatedButton(
-                        onPressed: _counter > 0 ? _resetCounter : null,
+                        onPressed: _counter > 0 ? _showResetDialog : null,
                         child: const Text('Reset'),
                       ),
                     ],
