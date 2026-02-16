@@ -11,6 +11,7 @@ class CounterImageToggleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'CW1 Counter & Toggle',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
