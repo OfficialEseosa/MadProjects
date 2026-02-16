@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -24,10 +25,57 @@ class CounterWidget extends StatefulWidget {
   _CounterWidgetState createState() => _CounterWidgetState();
 }
 
+
 class _CounterWidgetState extends State<CounterWidget> {
 //initial couter value
   int _counter = 0;
+  int _goal = 80;
+  int _max = 100;
+  bool _celebrated = false;
+  bool _maxCelebrated = false;
   TextEditingController _controller = TextEditingController();
+
+    void _checkGoal(BuildContext context) {
+    if (_counter >= _max && !_maxCelebrated) {
+      _maxCelebrated = true;
+      Future.microtask(() {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (dialogCtx) => AlertDialog(
+            title: const Text('Maximum Reached!'),
+            content: Text('You hit the absolute max of $_max! Amazing!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx),
+                child: const Text('Incredible!'),
+              ),
+            ],
+          ),
+        );
+      });
+    } else if (_counter >= _goal && !_celebrated) {
+      _celebrated = true;
+      Future.microtask(() {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          builder: (dialogCtx) => AlertDialog(
+            title: const Text('Goal reached!'),
+            content: Text('You hit your target of $_goal!'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogCtx),
+                child: const Text('Awesome!'),
+              ),
+            ],
+          ),
+        );
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +97,12 @@ class _CounterWidgetState extends State<CounterWidget> {
           ),
           Slider(
             min: 0,
-            max: 100,
-            value: _counter.toDouble(),
+            max: _max.toDouble(),
+            value: _counter.toDouble().clamp(0, _max.toDouble()),
             onChanged: (double value) {
               setState(() {
-                _counter = value.toInt();
+                _counter = value.toInt().clamp(0, _max);
+                _checkGoal(context);
               });
             },
             activeColor: Colors.blue,
@@ -107,7 +156,9 @@ class _CounterWidgetState extends State<CounterWidget> {
               ElevatedButton(
                 onPressed: (){
                   setState(() {
-                    _counter += _controller.text.isNotEmpty ? int.parse(_controller.text) : 0;
+                    int increment = _controller.text.isNotEmpty ? int.parse(_controller.text) : 0;
+                    _counter = (_counter + increment).clamp(0, _max);
+                    _checkGoal(context);
                   });
                 }, 
                 child: Text("Increment"),
