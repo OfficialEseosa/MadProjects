@@ -34,6 +34,19 @@ class _CounterWidgetState extends State<CounterWidget> {
   bool _celebrated = false;
   bool _maxCelebrated = false;
   TextEditingController _controller = TextEditingController();
+  List<int> _history = [];
+
+  void _saveToHistory() {
+    _history.add(_counter);
+  }
+
+  void _undo() {
+    if (_history.isNotEmpty) {
+      setState(() {
+        _counter = _history.removeLast();
+      });
+    }
+  }
 
   void _checkGoal(BuildContext context) {
     if (_counter >= _max && !_maxCelebrated) {
@@ -79,7 +92,7 @@ class _CounterWidgetState extends State<CounterWidget> {
   @override
   Widget build(BuildContext context) {
     final double progress = (_counter / _goal).clamp(0.0, 1.0);
-    final Color counterColor = Color.lerp(Colors.green, Colors.red, progress)!;
+    final Color counterColor = Color.lerp(Colors.red, Colors.green, progress)!;
     
     return Scaffold(
       appBar: AppBar(
@@ -104,6 +117,7 @@ class _CounterWidgetState extends State<CounterWidget> {
             value: _counter.toDouble().clamp(0, _max.toDouble()),
             onChanged: (double value) {
               setState(() {
+                _saveToHistory();
                 _counter = value.toInt().clamp(0, _max);
                 _checkGoal(context);
               });
@@ -119,6 +133,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                 onPressed: _counter > 0
                 ? () {
                   setState(() {
+                    _saveToHistory();
                     _counter--;
                   });
                 } : null,
@@ -128,6 +143,7 @@ class _CounterWidgetState extends State<CounterWidget> {
                 onPressed: _counter > 0
                 ? () {
                   setState(() {
+                    _saveToHistory();
                     _counter = 0;
                   });
                 } : null,
@@ -159,6 +175,7 @@ class _CounterWidgetState extends State<CounterWidget> {
               ElevatedButton(
                 onPressed: (){
                   setState(() {
+                    _saveToHistory();
                     int increment = _controller.text.isNotEmpty ? int.parse(_controller.text) : 0;
                     _counter = (_counter + increment).clamp(0, _max);
                     _checkGoal(context);
@@ -167,6 +184,36 @@ class _CounterWidgetState extends State<CounterWidget> {
                 child: Text("Increment"),
                 ),
             ],
+          ),
+
+          SizedBox(height: 20),
+
+          ElevatedButton(
+            onPressed: _history.isNotEmpty ? _undo : null,
+            child: Text("Undo"),
+          ),
+
+          SizedBox(height: 20),
+
+          Text(
+            'Counter History:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: _history.isEmpty
+                ? Center(child: Text('No history yet'))
+                : ListView.builder(
+                    itemCount: _history.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                          child: Text('${index + 1}'),
+                        ),
+                        title: Text('Value: ${_history[index]}'),
+                      );
+                    },
+                  ),
           ),
 
         ],
