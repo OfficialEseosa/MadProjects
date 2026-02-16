@@ -196,7 +196,7 @@ class _CounterWidgetState extends State<CounterWidget> {
           SizedBox(height: 20),
 
           Text(
-            'Counter History:',
+            'Counter History (Last 5):',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
@@ -204,13 +204,14 @@ class _CounterWidgetState extends State<CounterWidget> {
             child: _history.isEmpty
                 ? Center(child: Text('No history yet'))
                 : ListView.builder(
-                    itemCount: _history.length,
+                    itemCount: _history.length > 5 ? 5 : _history.length,
                     itemBuilder: (context, index) {
+                      int historyIndex = _history.length - 1 - index;
                       return ListTile(
                         leading: CircleAvatar(
-                          child: Text('${index + 1}'),
+                          child: Text('${historyIndex + 1}'),
                         ),
-                        title: Text('Value: ${_history[index]}'),
+                        title: Text('Value: ${_history[historyIndex]}'),
                       );
                     },
                   ),
